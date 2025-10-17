@@ -1,0 +1,4 @@
+# Ignore raw data files
+data/raw/*.jsonl
+myenv/
+data/processed/*.parquet
