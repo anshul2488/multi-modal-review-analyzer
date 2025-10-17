@@ -1,0 +1,108 @@
+================================================================================
+MULTI-MODAL REVIEW ANALYZER - MODEL PERFORMANCE REPORT
+================================================================================
+
+Training completed on device: cuda
+SBERT Model: sentence-transformers/all-MiniLM-L6-v2
+Total models trained: 8
+
+CLASSIFICATION TASK RESULTS
+----------------------------------------
+
+EarlyFusion:
+  SUCCESS: Successfully trained
+  Final validation metrics:
+    - Accuracy: 0.6990
+    - Precision: 0.4904
+    - Recall: 0.6990
+    - F1-Score: 0.5764
+    - F1-Macro: 0.4114
+    - F1-Micro: 0.6990
+  Model saved to: C:\Users\Anshul Shinde\Desktop\SEM 7\MMA LAB\multi_modal_review_analyzer\models\EarlyFusion_classification.pth
+
+LateFusion:
+  SUCCESS: Successfully trained
+  Final validation metrics:
+    - Accuracy: 0.7140
+    - Precision: 0.5098
+    - Recall: 0.7140
+    - F1-Score: 0.5949
+    - F1-Macro: 0.4166
+    - F1-Micro: 0.7140
+  Model saved to: C:\Users\Anshul Shinde\Desktop\SEM 7\MMA LAB\multi_modal_review_analyzer\models\LateFusion_classification.pth
+
+HybridFusion:
+  SUCCESS: Successfully trained
+  Final validation metrics:
+    - Accuracy: 0.7210
+    - Precision: 0.5198
+    - Recall: 0.7210
+    - F1-Score: 0.6041
+    - F1-Macro: 0.4189
+    - F1-Micro: 0.7210
+  Model saved to: C:\Users\Anshul Shinde\Desktop\SEM 7\MMA LAB\multi_modal_review_analyzer\models\HybridFusion_classification.pth
+
+CrossModalTransformer:
+  SUCCESS: Successfully trained
+  Final validation metrics:
+    - Accuracy: 0.7140
+    - Precision: 0.5098
+    - Recall: 0.7140
+    - F1-Score: 0.5949
+    - F1-Macro: 0.4166
+    - F1-Micro: 0.7140
+  Model saved to: C:\Users\Anshul Shinde\Desktop\SEM 7\MMA LAB\multi_modal_review_analyzer\models\CrossModalTransformer_classification.pth
+
+========================================
+REGRESSION TASK RESULTS
+----------------------------------------
+
+EarlyFusion:
+  SUCCESS: Successfully trained
+  Final validation metrics:
+    - MSE: 2.2931
+    - MAE: 1.3749
+    - RMSE: 1.5143
+    - R2: -0.0752
+    - Explained Variance: 0.0201
+    - Max Error: 2.9438
+    - Median AE: 1.4420
+  Model saved to: C:\Users\Anshul Shinde\Desktop\SEM 7\MMA LAB\multi_modal_review_analyzer\models\EarlyFusion_regression.pth
+
+LateFusion:
+  SUCCESS: Successfully trained
+  Final validation metrics:
+    - MSE: 2.1821
+    - MAE: 1.2771
+    - RMSE: 1.4772
+    - R2: -0.0106
+    - Explained Variance: 0.0000
+    - Max Error: 2.7798
+    - Median AE: 1.2202
+  Model saved to: C:\Users\Anshul Shinde\Desktop\SEM 7\MMA LAB\multi_modal_review_analyzer\models\LateFusion_regression.pth
+
+HybridFusion:
+  SUCCESS: Successfully trained
+  Final validation metrics:
+    - MSE: 2.1612
+    - MAE: 1.2399
+    - RMSE: 1.4701
+    - R2: 0.0114
+    - Explained Variance: 0.0131
+    - Max Error: 3.0442
+    - Median AE: 1.1559
+  Model saved to: C:\Users\Anshul Shinde\Desktop\SEM 7\MMA LAB\multi_modal_review_analyzer\models\HybridFusion_regression.pth
+
+CrossModalTransformer:
+  SUCCESS: Successfully trained
+  Final validation metrics:
+    - MSE: 2.1540
+    - MAE: 1.1436
+    - RMSE: 1.4677
+    - R2: 0.0017
+    - Explained Variance: 0.0277
+    - Max Error: 3.2486
+    - Median AE: 0.8109
+  Model saved to: C:\Users\Anshul Shinde\Desktop\SEM 7\MMA LAB\multi_modal_review_analyzer\models\CrossModalTransformer_regression.pth
+
+========================================
