@@ -1,3 +1,11 @@
+"""
+Advanced Feature Engineering Module for Cross-Modal Analysis.
+
+This module provides comprehensive feature extraction capabilities including
+sentiment analysis, linguistic features, cross-modal feature engineering,
+and fusion feature creation for the multimodal review analyzer.
+"""
+
 from textblob import TextBlob
 import numpy as np
 import torch
@@ -5,7 +13,20 @@ import torch.nn.functional as F
 from typing import Dict, List, Tuple
 import re
 
+
 def sentiment_features(text):
+    """
+    Extract basic sentiment features from text using TextBlob.
+    
+    Computes polarity (sentiment strength, range -1 to 1) and subjectivity
+    (opinion vs fact, range 0 to 1).
+    
+    Args:
+        text (str): Input text to analyze
+        
+    Returns:
+        dict: Dictionary containing 'polarity' and 'subjectivity' scores
+    """
     try:
         blob = TextBlob(text)
         polarity = blob.sentiment.polarity
@@ -15,7 +36,27 @@ def sentiment_features(text):
     return {"polarity": polarity, "subjectivity": subjectivity}
 
 def advanced_sentiment_features(text: str) -> Dict[str, float]:
-    """Enhanced sentiment analysis with multiple indicators"""
+    """
+    Extract advanced sentiment features with multiple indicators.
+    
+    Computes comprehensive sentiment analysis including basic sentiment scores,
+    text complexity metrics, emotional indicators, and confidence measures.
+    
+    Args:
+        text (str): Input text to analyze
+        
+    Returns:
+        dict: Dictionary containing multiple sentiment and text features:
+            - polarity: Sentiment polarity (-1 to 1)
+            - subjectivity: Subjectivity score (0 to 1)
+            - word_count: Number of words
+            - avg_word_length: Average word length
+            - exclamation_count: Number of exclamation marks
+            - question_count: Number of question marks
+            - caps_ratio: Ratio of uppercase characters
+            - sentiment_intensity: Absolute polarity value
+            - sentiment_confidence: Confidence based on subjectivity
+    """
     try:
         blob = TextBlob(text)
         
@@ -58,7 +99,24 @@ def advanced_sentiment_features(text: str) -> Dict[str, float]:
         }
 
 def cross_modal_feature_engineering(text_features: Dict, numerical_features: Dict) -> Dict[str, float]:
-    """Create cross-modal features that combine text and numerical information"""
+    """
+    Create cross-modal features that combine text and numerical information.
+    
+    Generates interaction features that capture relationships between text sentiment
+    and numerical ratings, helpfulness metrics, and review counts.
+    
+    Args:
+        text_features (dict): Text-based features (sentiment, linguistic features)
+        numerical_features (dict): Numerical features (ratings, votes, counts)
+        
+    Returns:
+        dict: Cross-modal interaction features including:
+            - sentiment_rating_alignment: Product of sentiment and rating
+            - sentiment_rating_discrepancy: Absolute difference between sentiment and normalized rating
+            - confidence_weighted_polarity: Polarity weighted by confidence
+            - word_count_normalized: Word count normalized by review count
+            - intensity_helpfulness_correlation: Sentiment intensity correlated with helpful votes
+    """
     
     cross_modal_features = {}
     
@@ -82,7 +140,19 @@ def cross_modal_feature_engineering(text_features: Dict, numerical_features: Dic
     return cross_modal_features
 
 def compute_cross_modal_attention_weights(text_emb: torch.Tensor, num_emb: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
-    """Compute attention weights for cross-modal fusion"""
+    """
+    Compute attention weights for cross-modal fusion using dot-product attention.
+    
+    Calculates attention scores between text and numerical embeddings to determine
+    the importance of each modality for fusion.
+    
+    Args:
+        text_emb (torch.Tensor): Text embeddings tensor
+        num_emb (torch.Tensor): Numerical embeddings tensor
+        
+    Returns:
+        tuple: (text_attention_weights, num_attention_weights) - Softmax-normalized attention weights
+    """
     
     # Simple dot-product attention
     attention_scores = torch.matmul(text_emb, num_emb.T)
@@ -94,7 +164,20 @@ def compute_cross_modal_attention_weights(text_emb: torch.Tensor, num_emb: torch
     return text_attention, num_attention
 
 def create_fusion_features(text_emb: torch.Tensor, num_features: torch.Tensor) -> torch.Tensor:
-    """Create advanced fusion features using multiple strategies"""
+    """
+    Create advanced fusion features using multiple fusion strategies.
+    
+    Combines text and numerical embeddings using various fusion techniques:
+    Hadamard product (element-wise multiplication), concatenation, addition,
+    and attention-weighted features.
+    
+    Args:
+        text_emb (torch.Tensor): Text embedding tensor
+        num_features (torch.Tensor): Numerical feature tensor
+        
+    Returns:
+        torch.Tensor: Concatenated fusion features from all strategies
+    """
     
     # 1. Element-wise multiplication (Hadamard product)
     hadamard = text_emb * num_features
@@ -122,7 +205,27 @@ def create_fusion_features(text_emb: torch.Tensor, num_features: torch.Tensor) -
     return fusion_features
 
 def extract_linguistic_features(text: str) -> Dict[str, float]:
-    """Extract linguistic features from text"""
+    """
+    Extract comprehensive linguistic features from text.
+    
+    Computes word-level, character-level, punctuation, case, and emotional
+    marker features to capture linguistic patterns in the text.
+    
+    Args:
+        text (str): Input text to analyze
+        
+    Returns:
+        dict: Dictionary containing linguistic features:
+            - word_count: Number of words
+            - char_count: Number of characters
+            - avg_word_length: Average word length
+            - punctuation_ratio: Ratio of punctuation to total characters
+            - uppercase_ratio: Ratio of uppercase to total characters
+            - lexical_diversity: Unique words / total words ratio
+            - positive_word_count: Count of positive sentiment words
+            - negative_word_count: Count of negative sentiment words
+            - sentiment_lexicon_score: Normalized positive-negative word difference
+    """
     
     # Word-level features
     words = text.split()
@@ -161,7 +264,22 @@ def extract_linguistic_features(text: str) -> Dict[str, float]:
     }
 
 def aggregate_numerical_features(df):
-    # df = DataFrame with numeric columns to aggregate (for example: 'rating', 'helpful_votes', etc.)
+    """
+    Aggregate numerical features from a DataFrame.
+    
+    Computes summary statistics from numerical columns including review count,
+    average rating, total helpful votes, and average review length.
+    
+    Args:
+        df (pandas.DataFrame): DataFrame containing review data with numerical columns
+        
+    Returns:
+        dict: Dictionary containing aggregated numerical features:
+            - review_count: Total number of reviews
+            - avg_rating: Average rating value
+            - total_helpful_votes: Sum of helpful votes
+            - avg_review_length: Average number of words per review
+    """
     agg_dict = {
         "review_count": df.shape[0],
         "avg_rating": np.mean(df["rating"]) if "rating" in df else 0,

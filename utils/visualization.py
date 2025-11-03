@@ -1,3 +1,11 @@
+"""
+Interactive Visualization Module for Multimodal Review Analyzer.
+
+This module provides comprehensive visualization capabilities using Plotly
+for creating interactive charts, comparison visualizations, and HTML dashboards
+for model performance analysis.
+"""
+
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
@@ -9,20 +17,60 @@ import matplotlib.pyplot as plt
 from typing import Dict, List, Any
 import json
 
+
 def plot_rating_distribution(df, rating_column="rating", key="rating_dist"):
+    """
+    Plot rating distribution histogram.
+    
+    Creates an interactive histogram showing the distribution of ratings
+    in the dataset using Plotly.
+    
+    Args:
+        df (pandas.DataFrame): DataFrame containing rating data
+        rating_column (str): Name of the rating column (default: "rating")
+        key (str): Unique key for Streamlit component caching
+    """
     fig = px.histogram(df, x=rating_column, nbins=5, title="Rating Distribution")
     st.plotly_chart(fig, use_container_width=True, key=key)
 
 def plot_sentiment_chart(sentiment_df, key="sentiment_chart"):
+    """
+    Plot sentiment distribution bar chart.
+    
+    Creates an interactive bar chart showing the distribution of sentiment
+    categories in the data.
+    
+    Args:
+        sentiment_df (pandas.DataFrame): DataFrame with 'sentiment' and 'count' columns
+        key (str): Unique key for Streamlit component caching
+    """
     fig = px.bar(sentiment_df, x="sentiment", y="count", color="sentiment", title="Sentiment Distribution")
     st.plotly_chart(fig, use_container_width=True, key=key)
 
 def show_dashboard(stats_dict):
+    """
+    Display a dashboard of metrics using Streamlit metric components.
+    
+    Args:
+        stats_dict (dict): Dictionary mapping metric names to values
+    """
     for k, v in stats_dict.items():
         st.metric(label=k, value=v)
 
 def create_model_comparison_chart(results: Dict[str, Dict[str, float]], task_type: str = "classification") -> go.Figure:
-    """Create comprehensive model comparison chart"""
+    """
+    Create comprehensive model comparison chart.
+    
+    Generates a multi-subplot chart comparing different models across multiple
+    performance metrics using Plotly.
+    
+    Args:
+        results (dict): Dictionary mapping model names to their metric dictionaries
+        task_type (str): Type of task - 'classification' or 'regression'
+        
+    Returns:
+        plotly.graph_objects.Figure: Interactive Plotly figure with comparison charts
+    """
     
     models = list(results.keys())
     
@@ -74,7 +122,19 @@ def create_model_comparison_chart(results: Dict[str, Dict[str, float]], task_typ
     return fig
 
 def create_fusion_technique_comparison(models_results: Dict[str, Dict[str, Dict[str, float]]]) -> go.Figure:
-    """Create comparison chart for different fusion techniques"""
+    """
+    Create comparison chart for different fusion techniques.
+    
+    Generates a multi-panel visualization comparing Early, Late, Hybrid, and
+    Cross-Modal Transformer fusion strategies across classification and regression tasks.
+    
+    Args:
+        models_results (dict): Nested dictionary with structure:
+            {task_type: {model_name: {metric: value}}}
+            
+    Returns:
+        plotly.graph_objects.Figure: Interactive Plotly figure with fusion comparison
+    """
     
     fusion_models = ['EarlyFusion', 'LateFusion', 'HybridFusion', 'CrossModalTransformer']
     tasks = ['classification', 'regression']
@@ -123,7 +183,18 @@ def create_fusion_technique_comparison(models_results: Dict[str, Dict[str, Dict[
     return fig
 
 def create_training_progress_chart(history: Dict[str, List[float]], task_type: str) -> go.Figure:
-    """Create training progress visualization"""
+    """
+    Create training progress visualization.
+    
+    Generates plots showing training and validation loss/accuracy over epochs.
+    
+    Args:
+        history (dict): Dictionary with 'train_loss', 'val_loss', 'train_acc', 'val_acc' keys
+        task_type (str): Type of task - 'classification' or 'regression'
+        
+    Returns:
+        plotly.graph_objects.Figure: Interactive Plotly figure with training curves
+    """
     
     epochs = range(1, len(history['train_loss']) + 1)
     
@@ -172,7 +243,19 @@ def create_training_progress_chart(history: Dict[str, List[float]], task_type: s
     return fig
 
 def create_cross_modal_analysis_chart(text_features: Dict, numerical_features: Dict) -> go.Figure:
-    """Create cross-modal feature analysis visualization"""
+    """
+    Create cross-modal feature analysis visualization.
+    
+    Generates a multi-panel chart showing text features, numerical features,
+    cross-modal interactions, and feature importance.
+    
+    Args:
+        text_features (dict): Dictionary of text-based features
+        numerical_features (dict): Dictionary of numerical features
+        
+    Returns:
+        plotly.graph_objects.Figure: Interactive Plotly figure with feature analysis
+    """
     
     fig = make_subplots(
         rows=2, cols=2,
@@ -230,7 +313,18 @@ def create_cross_modal_analysis_chart(text_features: Dict, numerical_features: D
     return fig
 
 def create_performance_radar_chart(models_results: Dict[str, Dict[str, float]]) -> go.Figure:
-    """Create radar chart for model performance comparison"""
+    """
+    Create radar chart for model performance comparison.
+    
+    Generates a polar (radar) chart showing multiple models' performance across
+    different metrics simultaneously.
+    
+    Args:
+        models_results (dict): Dictionary mapping model names to their metric dictionaries
+        
+    Returns:
+        plotly.graph_objects.Figure: Interactive Plotly radar chart
+    """
     
     metrics = ['accuracy', 'precision', 'recall', 'f1_score', 'mae', 'mse']
     metric_labels = ['Accuracy', 'Precision', 'Recall', 'F1-Score', 'MAE', 'MSE']
@@ -269,7 +363,18 @@ def create_performance_radar_chart(models_results: Dict[str, Dict[str, float]]) 
     return fig
 
 def create_interactive_dashboard_html(results: Dict[str, Any]) -> str:
-    """Generate interactive HTML dashboard"""
+    """
+    Generate interactive HTML dashboard.
+    
+    Creates a comprehensive HTML report with embedded Plotly charts and
+    interactive visualizations for model performance analysis.
+    
+    Args:
+        results (dict): Dictionary mapping model names to their metric dictionaries
+        
+    Returns:
+        str: HTML string containing the complete interactive dashboard
+    """
     
     html_template = """
     <!DOCTYPE html>
@@ -389,7 +494,7 @@ def create_interactive_dashboard_html(results: Dict[str, Any]) -> str:
     <body>
         <div class="container">
             <div class="header">
-                <h1>🚀 Multimodal Review Analyzer</h1>
+                <h1>Multimodal Review Analyzer</h1>
                 <p>Advanced Fusion Techniques & Cross-Modal Analysis</p>
             </div>
             
@@ -413,7 +518,7 @@ def create_interactive_dashboard_html(results: Dict[str, Any]) -> str:
             </div>
             
             <div class="fusion-comparison">
-                <h3>🎯 Fusion Technique Performance</h3>
+                <h3>Fusion Technique Performance</h3>
                 <p>Comparative analysis of Early Fusion, Late Fusion, Hybrid Fusion, and Cross-Modal Transformer approaches</p>
                 <div class="fusion-stats">
                     <div class="fusion-stat">
@@ -440,17 +545,17 @@ def create_interactive_dashboard_html(results: Dict[str, Any]) -> str:
             </div>
             
             <div class="chart-container">
-                <div class="chart-title">📊 Model Performance Comparison</div>
+                <div class="chart-title">Model Performance Comparison</div>
                 <div id="model-comparison"></div>
             </div>
             
             <div class="chart-container">
-                <div class="chart-title">🔄 Fusion Technique Analysis</div>
+                <div class="chart-title">Fusion Technique Analysis</div>
                 <div id="fusion-comparison"></div>
             </div>
             
             <div class="chart-container">
-                <div class="chart-title">🎯 Cross-Modal Feature Importance</div>
+                <div class="chart-title">Cross-Modal Feature Importance</div>
                 <div id="feature-importance"></div>
             </div>
         </div>
@@ -542,7 +647,18 @@ def create_interactive_dashboard_html(results: Dict[str, Any]) -> str:
     )
 
 def export_results_to_html(results: Dict[str, Any], filename: str = "multimodal_analysis_report.html"):
-    """Export analysis results to interactive HTML report"""
+    """
+    Export analysis results to interactive HTML report.
+    
+    Creates and saves an interactive HTML file with model performance visualizations.
+    
+    Args:
+        results (dict): Dictionary mapping model names to their metric dictionaries
+        filename (str): Output filename for the HTML report (default: "multimodal_analysis_report.html")
+        
+    Returns:
+        str: Path to the saved HTML file
+    """
     
     html_content = create_interactive_dashboard_html(results)
     

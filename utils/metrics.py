@@ -1,3 +1,11 @@
+"""
+Comprehensive Evaluation Metrics Module.
+
+This module provides extensive evaluation metrics for both classification and
+regression tasks, including cross-modal evaluation and advanced model comparison
+capabilities.
+"""
+
 from sklearn.metrics import (
     mean_squared_error, mean_absolute_error, accuracy_score, f1_score,
     precision_score, recall_score, confusion_matrix, classification_report,
@@ -8,8 +16,28 @@ from typing import Dict, List, Any, Tuple
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+
 def regression_metrics(y_true, y_pred):
-    """Comprehensive regression metrics"""
+    """
+    Calculate comprehensive regression evaluation metrics.
+    
+    Computes multiple regression metrics including error measures and variance
+    explained to provide a complete picture of model performance.
+    
+    Args:
+        y_true: True target values (array-like)
+        y_pred: Predicted target values (array-like)
+        
+    Returns:
+        dict: Dictionary containing:
+            - MSE: Mean Squared Error
+            - MAE: Mean Absolute Error
+            - RMSE: Root Mean Squared Error
+            - R2: R-squared (coefficient of determination)
+            - Explained Variance: Proportion of variance explained
+            - Max Error: Maximum absolute error
+            - Median AE: Median Absolute Error
+    """
     mse = mean_squared_error(y_true, y_pred)
     mae = mean_absolute_error(y_true, y_pred)
     rmse = np.sqrt(mse)
@@ -29,7 +57,25 @@ def regression_metrics(y_true, y_pred):
     }
 
 def classification_metrics(y_true, y_pred):
-    """Comprehensive classification metrics"""
+    """
+    Calculate comprehensive classification evaluation metrics.
+    
+    Computes multiple classification metrics including accuracy, precision,
+    recall, and F1-scores with different averaging strategies.
+    
+    Args:
+        y_true: True class labels (array-like)
+        y_pred: Predicted class labels (array-like)
+        
+    Returns:
+        dict: Dictionary containing:
+            - Accuracy: Overall classification accuracy
+            - Precision: Weighted precision score
+            - Recall: Weighted recall score
+            - F1-Score: Weighted F1 score
+            - F1-Macro: Macro-averaged F1 score
+            - F1-Micro: Micro-averaged F1 score
+    """
     acc = accuracy_score(y_true, y_pred)
     precision = precision_score(y_true, y_pred, average='weighted', zero_division=0)
     recall = recall_score(y_true, y_pred, average='weighted', zero_division=0)
@@ -49,7 +95,25 @@ def classification_metrics(y_true, y_pred):
     }
 
 def cross_modal_evaluation_metrics(y_true_text, y_pred_text, y_true_num, y_pred_num):
-    """Advanced cross-modal evaluation metrics"""
+    """
+    Calculate advanced cross-modal evaluation metrics.
+    
+    Evaluates performance across both text and numerical modalities and
+    measures cross-modal consistency and fusion effectiveness.
+    
+    Args:
+        y_true_text: True text modality labels
+        y_pred_text: Predicted text modality labels
+        y_true_num: True numerical modality values
+        y_pred_num: Predicted numerical modality values
+        
+    Returns:
+        dict: Dictionary containing:
+            - text_metrics: Classification metrics for text modality
+            - numerical_metrics: Regression metrics for numerical modality
+            - cross_modal_consistency: Consistency scores between modalities
+            - fusion_effectiveness: Measure of fusion improvement
+    """
     
     # Individual modality metrics
     text_metrics = classification_metrics(y_true_text, y_pred_text)
@@ -69,7 +133,25 @@ def cross_modal_evaluation_metrics(y_true_text, y_pred_text, y_true_num, y_pred_
     }
 
 def compute_cross_modal_consistency(y_true_text, y_pred_text, y_true_num, y_pred_num):
-    """Compute consistency between text and numerical predictions"""
+    """
+    Compute consistency metrics between text and numerical predictions.
+    
+    Measures agreement between predictions from different modalities and
+    consistency with ground truth across modalities.
+    
+    Args:
+        y_true_text: True text labels
+        y_pred_text: Predicted text labels
+        y_true_num: True numerical values
+        y_pred_num: Predicted numerical values
+        
+    Returns:
+        dict: Consistency metrics including:
+            - text_num_agreement: Agreement between text and numerical predictions
+            - text_consistency: Text prediction consistency with ground truth
+            - numerical_consistency: Numerical prediction consistency
+            - overall_consistency: Average consistency across all measures
+    """
     
     # Convert numerical ratings to sentiment classes for consistency check
     num_sentiment_true = (y_true_num >= 3).astype(int)  # 1 for positive (>=3), 0 for negative (<3)
@@ -93,7 +175,24 @@ def compute_cross_modal_consistency(y_true_text, y_pred_text, y_true_num, y_pred
     }
 
 def compute_fusion_effectiveness(y_true_text, y_pred_text, y_true_num, y_pred_num):
-    """Compute how effectively fusion improves predictions"""
+    """
+    Compute fusion effectiveness metrics.
+    
+    Measures how much fusion improves predictions compared to individual
+    modality performance.
+    
+    Args:
+        y_true_text: True text labels
+        y_pred_text: Predicted text labels (from fusion model)
+        y_true_num: True numerical values
+        y_pred_num: Predicted numerical values (from fusion model)
+        
+    Returns:
+        dict: Effectiveness metrics including:
+            - text_improvement: Improvement in text modality performance
+            - numerical_improvement: Improvement in numerical modality performance
+            - overall_improvement: Average improvement across modalities
+    """
     
     # Simulate individual modality performance (in real scenario, these would be actual individual model predictions)
     text_individual_acc = (y_true_text == y_pred_text).mean()
@@ -114,7 +213,21 @@ def compute_fusion_effectiveness(y_true_text, y_pred_text, y_true_num, y_pred_nu
     }
 
 def advanced_model_comparison(models_results: Dict[str, Dict[str, float]]) -> Dict[str, Any]:
-    """Advanced model comparison with statistical significance testing"""
+    """
+    Perform advanced model comparison with statistical analysis.
+    
+    Compares multiple models across different metrics, identifies best performers,
+    calculates performance gaps, and provides overall rankings.
+    
+    Args:
+        models_results (dict): Dictionary mapping model names to their metric dictionaries
+        
+    Returns:
+        dict: Comprehensive comparison results including:
+            - For each metric: best_model, best_value, performance_gaps, relative_performance
+            - overall_ranking: Models ranked by average performance
+            - model_scores: Average scores for each model
+    """
     
     # Extract metrics for comparison
     metrics = ['accuracy', 'f1_score', 'precision', 'recall']
@@ -155,7 +268,20 @@ def advanced_model_comparison(models_results: Dict[str, Dict[str, float]]) -> Di
     return comparison_results
 
 def create_confusion_matrix_plot(y_true, y_pred, model_name: str = "Model"):
-    """Create confusion matrix visualization"""
+    """
+    Create a confusion matrix visualization.
+    
+    Generates a heatmap showing the confusion matrix for classification results,
+    useful for understanding classification errors and model performance.
+    
+    Args:
+        y_true: True class labels
+        y_pred: Predicted class labels
+        model_name (str): Name of the model for plot title
+        
+    Returns:
+        matplotlib.figure.Figure: Figure object containing the confusion matrix plot
+    """
     
     cm = confusion_matrix(y_true, y_pred)
     
@@ -171,7 +297,20 @@ def create_confusion_matrix_plot(y_true, y_pred, model_name: str = "Model"):
     return plt.gcf()
 
 def create_regression_scatter_plot(y_true, y_pred, model_name: str = "Model"):
-    """Create regression scatter plot with perfect prediction line"""
+    """
+    Create a regression scatter plot with perfect prediction reference line.
+    
+    Visualizes predicted vs actual values with a diagonal reference line
+    representing perfect predictions.
+    
+    Args:
+        y_true: True target values
+        y_pred: Predicted target values
+        model_name (str): Name of the model for plot title
+        
+    Returns:
+        matplotlib.figure.Figure: Figure object containing the scatter plot
+    """
     
     plt.figure(figsize=(8, 6))
     plt.scatter(y_true, y_pred, alpha=0.6, color='blue')
@@ -192,7 +331,19 @@ def create_regression_scatter_plot(y_true, y_pred, model_name: str = "Model"):
 
 def generate_model_report(models_results: Dict[str, Dict[str, float]], 
                          task_type: str = "classification") -> str:
-    """Generate comprehensive model performance report"""
+    """
+    Generate a comprehensive markdown-formatted model performance report.
+    
+    Creates a detailed report comparing all models, identifying best performers,
+    and providing recommendations for deployment.
+    
+    Args:
+        models_results (dict): Dictionary mapping model names to their metrics
+        task_type (str): Type of task - 'classification' or 'regression'
+        
+    Returns:
+        str: Markdown-formatted report string
+    """
     
     report = f"""
 # Multimodal Review Analyzer - Model Performance Report
@@ -246,7 +397,19 @@ def generate_model_report(models_results: Dict[str, Dict[str, float]],
     return report
 
 def combined_metrics(y_true, y_pred, task_type='regression'):
-    """Legacy function for backward compatibility"""
+    """
+    Legacy function for backward compatibility.
+    
+    Wrapper function that calls appropriate metrics function based on task type.
+    
+    Args:
+        y_true: True values
+        y_pred: Predicted values
+        task_type (str): 'classification' or 'regression'
+        
+    Returns:
+        dict: Metrics dictionary for the specified task type
+    """
     if task_type == 'regression':
         return regression_metrics(y_true, y_pred)
     elif task_type == 'classification':

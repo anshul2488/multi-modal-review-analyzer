@@ -1,3 +1,10 @@
+"""
+Alternative Streamlit Application Module for Multimodal Review Analyzer.
+
+This module provides an alternative implementation of the Streamlit application
+with a simplified model trainer interface. Useful for quick testing and demonstrations.
+"""
+
 import os
 import json
 import pickle
@@ -32,9 +39,21 @@ os.makedirs(PROCESSED_DATA_DIR, exist_ok=True)
 os.makedirs(os.path.dirname(SAVED_MODEL_PATH), exist_ok=True)
 
 class ModelTrainer:
-    """Comprehensive model trainer and manager"""
+    """
+    Comprehensive model trainer and manager for multimodal review analysis.
+    
+    This class provides functionality for training, managing, and evaluating
+    multiple model architectures including fusion models, LSTM, and Transformer.
+    Designed for use in Streamlit applications with simplified interfaces.
+    """
     
     def __init__(self):
+        """
+        Initialize the model trainer with preprocessor and encoder.
+        
+        Sets up text preprocessor and SBERT encoder for text processing,
+        and initializes storage for trained models and metrics.
+        """
         self.preprocessor = TextPreprocessor()
         self.encoder = SBERTEncoder(model_name=SBERT_MODEL_NAME, device=DEVICE)
         self.trained_models = {}
@@ -421,21 +440,22 @@ def create_streamlit_app():
         unsafe_allow_html=True,
     )
     
+    # Configure Streamlit page settings
     st.set_page_config(
         page_title="Multi-Modal Review Analyzer",
-        page_icon="✨",
+        page_icon=None,  # Removed emoji for professional appearance
         layout="wide",
         initial_sidebar_state="expanded"
     )
     
-    st.title("✨ Multi-Modal Review Analyzer")
+    st.title("Multi-Modal Review Analyzer")
     
     # Initialize trainer
     if 'trainer' not in st.session_state:
         st.session_state.trainer = ModelTrainer()
     
-    # Sidebar
-    st.sidebar.header("📁 Data Files")
+    # Sidebar for file selection
+    st.sidebar.header("Data Files")
     raw_files = list_jsonl_files(RAW_DATA_DIR)
     default_reviews = os.path.basename(REVIEWS_FILE)
     default_metadata = os.path.basename(METADATA_FILE)
@@ -455,8 +475,8 @@ def create_streamlit_app():
     
     selected_reviews_path = os.path.join(RAW_DATA_DIR, reviews_choice) if reviews_choice else REVIEWS_FILE
     
-    # Process and load data
-    if st.sidebar.button("🔄 Process Data", type="primary"):
+    # Process and load data button
+    if st.sidebar.button("Process Data", type="primary"):
         with st.spinner("Processing data..."):
             parquet_path = ensure_processed_parquet(selected_reviews_path)
             st.success("Data processed successfully!")
@@ -469,8 +489,8 @@ def create_streamlit_app():
         st.error(f"Error loading data: {e}")
         st.stop()
     
-    # Main tabs
-    tabs = st.tabs(["📊 Overview", "🔍 Explore", "🚀 Train Models", "🎯 Inference"])
+    # Main navigation tabs
+    tabs = st.tabs(["Overview", "Explore", "Train Models", "Inference"])
     
     with tabs[0]:  # Overview
         st.markdown("<div class='vercel-card'>", unsafe_allow_html=True)
@@ -528,8 +548,8 @@ def create_streamlit_app():
                 </div>
                 """, unsafe_allow_html=True)
         
-        # Rating distribution
-        st.subheader("📈 Rating Distribution")
+        # Rating distribution visualization
+        st.subheader("Rating Distribution")
         if "overall" in reviews_df.columns:
             plot_rating_distribution(reviews_df, rating_column="overall")
         else:
@@ -539,10 +559,10 @@ def create_streamlit_app():
     
     with tabs[1]:  # Explore
         st.markdown("<div class='vercel-card'>", unsafe_allow_html=True)
-        st.subheader("🔍 Data Exploration")
+        st.subheader("Data Exploration")
         
-        # Sample data
-        st.subheader("📋 Sample Data")
+        # Sample data display
+        st.subheader("Sample Data")
         if len(reviews_df) > 0:
             st.dataframe(reviews_df.head(10))
         else:
@@ -550,7 +570,7 @@ def create_streamlit_app():
         
         # Text preprocessing example
         if len(reviews_df) > 0 and 'reviewText' in reviews_df.columns:
-            st.subheader("🧹 Text Preprocessing Example")
+            st.subheader("Text Preprocessing Example")
             example_text = reviews_df['reviewText'].iloc[0]
             cleaned_text = st.session_state.trainer.preprocessor.clean_text(example_text)
             filtered_text = st.session_state.trainer.preprocessor.remove_stopwords(cleaned_text)
@@ -568,7 +588,7 @@ def create_streamlit_app():
         
         # Embedding preview
         if len(reviews_df) > 0 and 'reviewText' in reviews_df.columns:
-            st.subheader("🧠 SBERT Embedding Preview")
+            st.subheader("SBERT Embedding Preview")
             try:
                 example_text = reviews_df['reviewText'].iloc[0]
                 cleaned_text = st.session_state.trainer.preprocessor.clean_text(example_text)
@@ -583,7 +603,7 @@ def create_streamlit_app():
     
     with tabs[2]:  # Train Models
         st.markdown("<div class='vercel-card'>", unsafe_allow_html=True)
-        st.subheader("🚀 Model Training")
+        st.subheader("Model Training")
         
         # Training controls
         col1, col2, col3 = st.columns(3)
@@ -603,7 +623,7 @@ def create_streamlit_app():
             epochs = st.slider("Epochs", 1, 20, 5)
             max_rows = st.slider("Max Training Rows", 1000, 50000, 10000)
         
-        if st.button("🎯 Start Training", type="primary"):
+        if st.button("Start Training", type="primary"):
             if not task_types or not model_names:
                 st.error("Please select at least one task and one model")
             else:
@@ -613,26 +633,26 @@ def create_streamlit_app():
                             reviews_df, task_types, model_names
                         )
                         
-                        st.success("🎉 Training completed successfully!")
+                        st.success("Training completed successfully!")
                         
                         # Display results
                         for task_type in task_types:
-                            st.subheader(f"📊 {task_type.title()} Results")
+                            st.subheader(f"{task_type.title()} Results")
                             for model_name in model_names:
                                 if model_name in results[task_type]:
                                     result = results[task_type][model_name]
                                     if 'error' in result:
-                                        st.error(f"❌ {model_name}: {result['error']}")
+                                        st.error(f"ERROR: {model_name}: {result['error']}")
                                     else:
                                         metrics = result['final_val_metrics']
-                                        st.write(f"✅ **{model_name}**: {metrics}")
+                                        st.write(f"SUCCESS: **{model_name}**: {metrics}")
                                         
                     except Exception as e:
                         st.error(f"Training failed: {e}")
         
         # Show trained models
         if st.session_state.trainer.trained_models:
-            st.subheader("🎯 Trained Models")
+            st.subheader("Trained Models")
             for model_key, metrics in st.session_state.trainer.model_metrics.items():
                 st.write(f"**{model_key}**: {metrics}")
         
@@ -640,10 +660,10 @@ def create_streamlit_app():
     
     with tabs[3]:  # Inference
         st.markdown("<div class='vercel-card'>", unsafe_allow_html=True)
-        st.subheader("🎯 Model Inference")
+        st.subheader("Model Inference")
         
         if not st.session_state.trainer.trained_models:
-            st.warning("⚠️ No trained models available. Please train models first.")
+            st.warning("WARNING: No trained models available. Please train models first.")
         else:
             # Model selection
             col1, col2 = st.columns(2)
@@ -660,15 +680,15 @@ def create_streamlit_app():
                 height=100
             )
             
-            if st.button("🔮 Make Prediction", type="primary"):
+            if st.button("Make Prediction", type="primary"):
                 if user_text.strip():
                     model_name, task_type = selected_model.split('_')
                     result = st.session_state.trainer.predict(model_name, task_type, user_text)
                     
                     if 'error' in result:
-                        st.error(f"❌ Error: {result['error']}")
+                        st.error(f"ERROR: {result['error']}")
                     else:
-                        st.success("✅ Prediction completed!")
+                        st.success("Prediction completed successfully!")
                         
                         if task_type == 'classification':
                             st.write(f"**Prediction:** {result['prediction']}")

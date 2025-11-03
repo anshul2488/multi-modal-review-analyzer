@@ -1,3 +1,11 @@
+"""
+Data Loading and Preprocessing Module.
+
+This module provides functions for loading JSONL files, processing them into
+Parquet format with embeddings and sentiment features, and managing the
+processed data pipeline.
+"""
+
 import json
 import os
 from typing import List, Optional
@@ -10,8 +18,19 @@ from preprocessing.text_preprocessor import TextPreprocessor
 from models.nlp_utils import SBERTEncoder
 from preprocessing.feature_engineering import sentiment_features
 
+
 def load_jsonl(filename):
-    """Load a JSONL file into a pandas DataFrame."""
+    """
+    Load a JSONL (JSON Lines) file into a pandas DataFrame.
+    
+    Reads a file where each line is a JSON object and converts it to a DataFrame.
+    
+    Args:
+        filename (str): Path to the JSONL file
+        
+    Returns:
+        pandas.DataFrame: DataFrame containing all records from the JSONL file
+    """
     records = []
     with open(filename, 'r', encoding='utf-8') as f:
         for line in f:
@@ -26,7 +45,24 @@ def jsonl_batch_generator(
     device=None,
     preprocess_fn=None,
 ):
-    """Yields batches as lists (text), tensors (num/label), moved to device."""
+    """
+    Generator function that yields batches of data from a JSONL file.
+    
+    Processes the file in batches, extracting text, numerical features, and labels.
+    Useful for processing large files without loading everything into memory.
+    
+    Args:
+        filename (str): Path to JSONL file
+        batch_size (int): Number of records per batch (default: 32768)
+        text_column (str): Name of the text column in JSON (default: 'reviewText')
+        num_columns (list): List of numerical column names to extract
+        label_column (str): Name of the label column (optional)
+        device (torch.device): Device to move tensors to (default: auto-detect)
+        preprocess_fn (callable): Optional preprocessing function for text
+        
+    Yields:
+        tuple: (texts_list, num_tensor, label_tensor) for each batch
+    """
     num_columns = num_columns or []
     texts, nums, labels = [], [], []
     if device is None:
@@ -55,7 +91,15 @@ def jsonl_batch_generator(
 
 
 def list_jsonl_files(directory: str = RAW_DATA_DIR) -> List[str]:
-    """Return sorted list of .jsonl files in the given directory."""
+    """
+    List all JSONL files in the specified directory.
+    
+    Args:
+        directory (str): Directory path to search for JSONL files (default: RAW_DATA_DIR)
+        
+    Returns:
+        list: Sorted list of JSONL filenames, empty list if directory not found
+    """
     try:
         files = [f for f in os.listdir(directory) if f.lower().endswith('.jsonl')]
         files.sort()
@@ -65,15 +109,38 @@ def list_jsonl_files(directory: str = RAW_DATA_DIR) -> List[str]:
 
 
 def _ensure_dir_exists(directory: str) -> None:
+    """
+    Internal helper function to ensure a directory exists.
+    
+    Creates the directory if it doesn't exist, with no error if it already exists.
+    
+    Args:
+        directory (str): Directory path to ensure exists
+    """
     if not os.path.exists(directory):
         os.makedirs(directory, exist_ok=True)
 
 
 def _sbert_encode_batch(encoder: SBERTEncoder, texts: List[str], max_length: int) -> pd.DataFrame:
+    """
+    Internal helper function to encode a batch of texts using SBERT.
+    
+    Converts text embeddings to a DataFrame with columns named emb_0, emb_1, etc.
+    
+    Args:
+        encoder (SBERTEncoder): SBERT encoder instance
+        texts (list): List of text strings to encode
+        max_length (int): Maximum sequence length for encoding
+        
+    Returns:
+        pandas.DataFrame: DataFrame with embedding columns, empty DataFrame if no texts
+    """
     if not texts:
         return pd.DataFrame()
-    emb = encoder.encode(texts, max_length=max_length)  # returns np.ndarray [B, D]
+    # Encode texts to get numpy array of shape [batch_size, embedding_dim]
+    emb = encoder.encode(texts, max_length=max_length)
     dim = emb.shape[1]
+    # Create column names for each embedding dimension
     columns = [f"emb_{i}" for i in range(dim)]
     return pd.DataFrame(emb, columns=columns)
 
@@ -158,5 +225,15 @@ def ensure_processed_parquet(input_jsonl_path: str) -> str:
 
 
 def load_processed_parquet(parquet_path: str) -> pd.DataFrame:
-    """Efficiently load a processed parquet file."""
+    """
+    Efficiently load a processed Parquet file.
+    
+    Parquet format provides efficient compression and faster loading compared to CSV.
+    
+    Args:
+        parquet_path (str): Path to the Parquet file
+        
+    Returns:
+        pandas.DataFrame: Loaded DataFrame with all processed features and embeddings
+    """
     return pd.read_parquet(parquet_path)
