@@ -1,58 +1,58 @@
-# 🚀 Multimodal Review Analyzer
+# Multimodal Review Analyzer
 
 A comprehensive system for analyzing product reviews using advanced multimodal fusion techniques, featuring Early Fusion, Late Fusion, Hybrid Fusion, and Cross-Modal Transformer architectures with interactive deployment capabilities.
 
-## ✨ Features
+## Features
 
-### 🔧 Advanced Fusion Techniques
+### Advanced Fusion Techniques
 - **Early Fusion**: Concatenates text and numerical features before processing with residual connections
 - **Late Fusion**: Processes modalities separately with decision-level fusion and attention mechanisms
 - **Hybrid Fusion**: Combines early and late fusion with bidirectional attention and gating mechanisms
 - **Cross-Modal Transformer**: Uses transformer architecture with cross-modal attention for enhanced feature interaction
 - **Ensemble Models**: Advanced ensemble strategies with adaptive weighting and confidence estimation
 
-### 🧠 Deep Learning Models
+### Deep Learning Models
 - **LSTM**: Long Short-Term Memory for sequential text processing
 - **Transformer**: Self-attention based text processing with positional encoding
 - **Custom Fusion Architectures**: Novel cross-modal fusion implementations
 
-### 📊 Interactive Dashboard
+### Interactive Dashboard
 - **Modern UI**: Vercel-inspired design with responsive layout
 - **Real-time Analysis**: Live model training and inference capabilities
 - **Advanced Visualizations**: Performance comparison charts, radar plots, and cross-modal analysis
 - **Export Functionality**: Interactive HTML reports with downloadable analysis
 
-### 🔬 Cross-Modal Analysis
+### Cross-Modal Analysis
 - **Feature Engineering**: Advanced sentiment analysis, linguistic features, and cross-modal interactions
 - **Attention Mechanisms**: Cross-modal attention weights and fusion effectiveness analysis
 - **Novel Metrics**: Cross-modal consistency and fusion effectiveness evaluation
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 multi_modal_review_analyzer/
-├── 🎯 app.py                          # Main Streamlit application with interactive dashboard
-├── ⚙️ config.py                       # Configuration settings
-├── 🚀 train_models.py                 # Enhanced model training with all fusion techniques
-├── 🧠 models/                         # Model implementations
+├── app.py                          # Main Streamlit application with interactive dashboard
+├── config.py                       # Configuration settings
+├── train_models.py                 # Enhanced model training with all fusion techniques
+├── models/                         # Model implementations
 │   ├── fusion_model.py               # Advanced fusion architectures + ensemble models
 │   ├── lstm_model.py                 # LSTM implementation
 │   ├── transformer_model.py          # Transformer implementation
 │   └── nlp_utils.py                  # SBERT and NLP utilities
-├── 🔧 preprocessing/                  # Data preprocessing and feature engineering
+├── preprocessing/                  # Data preprocessing and feature engineering
 │   ├── text_preprocessor.py          # Text preprocessing pipeline
 │   └── feature_engineering.py        # Cross-modal feature engineering
-├── 🛠️ utils/                         # Utility functions
+├── utils/                         # Utility functions
 │   ├── data_loader.py                # Data loading and preprocessing
 │   ├── metrics.py                    # Advanced evaluation metrics
 │   └── visualization.py              # Interactive visualization tools
-├── 📊 data/                          # Data directory
+├── data/                          # Data directory
 │   ├── raw/                          # Raw JSONL data files
 │   └── processed/                    # Processed Parquet files
-└── 📈 reports/                       # Generated analysis reports
+└── reports/                       # Generated analysis reports
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Installation
 
@@ -76,7 +76,7 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-🌐 **Access the application at**: `http://localhost:8501`
+**Access the application at**: `http://localhost:8501`
 
 ### 3. Training Models
 
@@ -88,7 +88,7 @@ python train_models.py
 python train_models.py --models EarlyFusion LateFusion HybridFusion CrossModalTransformer
 ```
 
-## 🎯 Model Architectures
+## Model Architectures
 
 ### Fusion Techniques
 
@@ -127,7 +127,7 @@ python train_models.py --models EarlyFusion LateFusion HybridFusion CrossModalTr
 - **Architecture**: Multi-head self-attention with positional encoding
 - **Features**: Layer normalization, feed-forward networks, residual connections
 
-## 📊 Advanced Features
+## Advanced Features
 
 ### Cross-Modal Feature Engineering
 
@@ -179,7 +179,7 @@ fusion_features = create_fusion_features(text_embeddings, numerical_features)
 - **Fusion Effectiveness**: Improvement from fusion strategies
 - **Feature Importance**: Cross-modal feature contribution analysis
 
-## 🔧 Configuration
+## Configuration
 
 Key parameters in `config.py`:
 
@@ -197,7 +197,7 @@ DROPOUT_RATE = 0.2            # Dropout probability
 ATTENTION_HEADS = 8           # Number of attention heads
 ```
 
-## 📈 Performance Optimization
+## Performance Optimization
 
 ### Model Optimization Features
 - **Gradient Clipping**: Prevents exploding gradients
@@ -210,7 +210,7 @@ ATTENTION_HEADS = 8           # Number of attention heads
 - **Adaptive Ensemble**: Dynamic model selection based on input characteristics
 - **Confidence Estimation**: Uncertainty quantification for predictions
 
-## 📊 Data Format
+## Data Format
 
 ### Input Data Structure (JSONL)
 ```json
@@ -229,7 +229,7 @@ ATTENTION_HEADS = 8           # Number of attention heads
 - **Numerical Features**: Ratings, helpful votes, review counts
 - **Cross-Modal Features**: Interaction terms, confidence scores, alignment metrics
 
-## 🎨 Interactive HTML Reports
+## Interactive HTML Reports
 
 The system generates comprehensive HTML reports with:
 
@@ -238,7 +238,7 @@ The system generates comprehensive HTML reports with:
 - **Fusion Analysis**: Detailed fusion technique evaluation
 - **Export Capabilities**: Downloadable reports and data
 
-## 🚀 Deployment
+## Deployment
 
 ### Local Deployment
 ```bash
@@ -253,7 +253,7 @@ The application is ready for deployment on:
 - **AWS/GCP**: Container-based deployment
 - **Docker**: Containerized deployment
 
-## 📚 Research Contributions
+## Research Contributions
 
 This project implements several novel contributions:
 
@@ -262,7 +262,7 @@ This project implements several novel contributions:
 3. **Cross-Modal Feature Engineering**: Advanced feature interaction techniques
 4. **Interactive Analysis Tools**: Comprehensive visualization and analysis dashboard
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature-name`
@@ -270,24 +270,20 @@ This project implements several novel contributions:
 4. Add tests for new functionality
 5. Submit a pull request with detailed description
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **SBERT**: For semantic text embeddings
 - **Streamlit**: For interactive web application framework
 - **PyTorch**: For deep learning framework
 - **Plotly**: For interactive visualizations
 
-## 📞 Support
+## Support
 
 For questions, issues, or contributions:
 - Create an issue on GitHub
 - Contact the development team
 - Check the documentation for detailed guides
-
----
-
-**🌟 Star this repository if you find it helpful!**

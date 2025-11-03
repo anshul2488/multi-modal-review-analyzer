@@ -38,14 +38,14 @@ def check_dependencies():
             missing_packages.append(package)
     
     if missing_packages:
-        print("❌ Missing required packages:")
+        print("ERROR: Missing required packages:")
         for package in missing_packages:
             print(f"   - {package}")
-        print("\n📦 Install missing packages with:")
+        print("\nInstall missing packages with:")
         print(f"   pip install {' '.join(missing_packages)}")
         return False
     
-    print("✅ All required dependencies are installed")
+    print("All required dependencies are installed")
     return True
 
 def check_data_files():
@@ -53,7 +53,7 @@ def check_data_files():
     data_dir = Path("data/raw")
     
     if not data_dir.exists():
-        print("⚠️  Data directory not found. Creating sample structure...")
+        print("WARNING: Data directory not found. Creating sample structure...")
         data_dir.mkdir(parents=True, exist_ok=True)
         
         # Create a sample data file
@@ -67,15 +67,15 @@ def check_data_files():
         with open(sample_file, 'w') as f:
             f.write('\n'.join(sample_data))
         
-        print(f"✅ Created sample data file: {sample_file}")
+        print(f"Created sample data file: {sample_file}")
     
     return True
 
 def run_streamlit_app(port=8501, host="localhost", debug=False):
     """Run the Streamlit application"""
     
-    print("🚀 Starting Multimodal Review Analyzer...")
-    print(f"🌐 Application will be available at: http://{host}:{port}")
+    print("Starting Multimodal Review Analyzer...")
+    print(f"Application will be available at: http://{host}:{port}")
     
     # Build streamlit command
     cmd = [
@@ -87,14 +87,14 @@ def run_streamlit_app(port=8501, host="localhost", debug=False):
     
     if debug:
         cmd.extend(["--logger.level", "debug"])
-        print("🐛 Debug mode enabled")
+        print("Debug mode enabled")
     
     try:
         subprocess.run(cmd, check=True)
     except KeyboardInterrupt:
-        print("\n👋 Application stopped by user")
+        print("\nApplication stopped by user")
     except subprocess.CalledProcessError as e:
-        print(f"❌ Error running application: {e}")
+        print(f"ERROR: Error running application: {e}")
         return False
     
     return True
@@ -141,7 +141,7 @@ Examples:
     
     args = parser.parse_args()
     
-    print("🎯 Multimodal Review Analyzer - Application Runner")
+    print("Multimodal Review Analyzer - Application Runner")
     print("=" * 50)
     
     # Check dependencies

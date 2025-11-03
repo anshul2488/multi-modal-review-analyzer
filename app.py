@@ -1,3 +1,11 @@
+"""
+Main Streamlit Application for Multimodal Review Analyzer.
+
+This module provides an interactive web interface for analyzing product reviews
+using various multimodal fusion techniques. It includes functionality for data
+exploration, model training, inference, and advanced analysis visualization.
+"""
+
 import os
 import streamlit as st
 import pandas as pd
@@ -31,9 +39,10 @@ from models.fusion_model import EarlyFusionModel, HybridFusionModel
 from models.lstm_model import LSTMModel
 from models.transformer_model import TransformerEncoderModel
 
+# Configure Streamlit page settings
 st.set_page_config(
     page_title="Multi-Modal Review Analyzer",
-    page_icon="📊",
+    page_icon=None,  # Removed emoji for professional appearance
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -249,7 +258,13 @@ def train_model(df: pd.DataFrame, model_name: str, task_type: str, max_rows: int
     return model, {"train": train_hist[-1], "val": val_hist[-1]}
 
 def main():
-    st.title("✨ Multi-Modal Amazon Review Analyzer")
+    """
+    Main function to run the Streamlit application.
+    
+    Sets up the UI layout, loads data, and manages interaction tabs
+    for data overview, exploration, model training, inference, and advanced analysis.
+    """
+    st.title("Multi-Modal Amazon Review Analyzer")
 
     # Sidebar file selection
     st.sidebar.header("Data Files")
@@ -385,10 +400,10 @@ def main():
     # Advanced Analysis Tab
     with tabs[4]:
         st.markdown('<div class="vercel-card">', unsafe_allow_html=True)
-        st.header("🔬 Advanced Multimodal Analysis")
+        st.header("Advanced Multimodal Analysis")
         
         # Model Performance Comparison
-        st.subheader("📊 Model Performance Comparison")
+        st.subheader("Model Performance Comparison")
         
         # Mock results for demonstration (in real implementation, these would come from actual training)
         mock_results = {
@@ -413,7 +428,7 @@ def main():
         st.plotly_chart(fusion_fig, use_container_width=True, key="fusion_technique_chart")
         
         # Cross-modal feature analysis
-        st.subheader("🎯 Cross-Modal Feature Analysis")
+        st.subheader("Cross-Modal Feature Analysis")
         
         # Mock feature data
         sample_text_features = {
@@ -428,12 +443,12 @@ def main():
         st.plotly_chart(cross_modal_fig, use_container_width=True, key="cross_modal_analysis_chart")
         
         # Performance radar chart
-        st.subheader("🎯 Performance Radar Chart")
+        st.subheader("Performance Radar Chart")
         radar_fig = create_performance_radar_chart(mock_results)
         st.plotly_chart(radar_fig, use_container_width=True, key="performance_radar_chart")
         
         # Advanced metrics analysis
-        st.subheader("📈 Advanced Metrics Analysis")
+        st.subheader("Advanced Metrics Analysis")
         
         col1, col2 = st.columns(2)
         
@@ -450,7 +465,7 @@ def main():
                     st.write(f"**{metric.replace('_', ' ').title()}**: {data['best_model']} ({data['best_value']:.3f})")
         
         # Generate and display model report
-        st.subheader("📋 Comprehensive Model Report")
+        st.subheader("Comprehensive Model Report")
         
         if st.button("Generate Model Report"):
             report = generate_model_report(mock_results, "classification")
@@ -463,14 +478,14 @@ def main():
             # Provide download link
             with open(html_filename, 'rb') as f:
                 st.download_button(
-                    label="📥 Download Interactive Report",
+                    label="Download Interactive Report",
                     data=f.read(),
                     file_name="multimodal_analysis_report.html",
                     mime="text/html"
                 )
         
         # Feature engineering demonstration
-        st.subheader("🔧 Cross-Modal Feature Engineering Demo")
+        st.subheader("Cross-Modal Feature Engineering Demo")
         
         demo_text = st.text_area("Enter text for feature analysis:", 
                                 "This product is absolutely amazing! The quality is outstanding and I highly recommend it.")

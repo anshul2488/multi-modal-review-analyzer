@@ -1,3 +1,12 @@
+"""
+Model Training Module for Multimodal Review Analyzer.
+
+This module provides comprehensive model training functionality including support
+for multiple fusion architectures (Early, Late, Hybrid, Cross-Modal Transformer),
+ensemble models, and individual models (LSTM, Transformer). It handles data
+preprocessing, model training, evaluation, and report generation.
+"""
+
 import os
 import json
 import pickle
@@ -60,8 +69,8 @@ class ModelTrainer:
         self.model_metrics = {}
         self.training_history = {}
         
-        print(f"🚀 Model Trainer initialized on device: {DEVICE}")
-        print(f"📊 SBERT Model: {SBERT_MODEL_NAME}")
+        print(f"Model Trainer initialized on device: {DEVICE}")
+        print(f"SBERT Model: {SBERT_MODEL_NAME}")
         
     def get_embedding_columns(self, df: pd.DataFrame) -> List[str]:
         return [c for c in df.columns if c.startswith('emb_')]
@@ -72,7 +81,7 @@ class ModelTrainer:
         if not emb_cols:
             raise ValueError("No embedding columns found in data")
             
-        print(f"📈 Dataset Info:")
+        print(f"Dataset Info:")
         print(f"   - Total samples: {len(df)}")
         print(f"   - Embedding dimensions: {len(emb_cols)}")
         print(f"   - Available columns: {list(df.columns)}")
@@ -99,11 +108,11 @@ class ModelTrainer:
                     break
         
         if text_column is None:
-            print("⚠️  Warning: No text column found, using dummy text")
+            print("WARNING: No text column found, using dummy text")
             text_column = 'dummy_text'
             df[text_column] = 'sample review text'
         
-        print(f"📝 Using text column: {text_column}")
+        print(f"Using text column: {text_column}")
         
         # Add advanced features if not present
         if 'word_count' not in df.columns:
@@ -120,7 +129,7 @@ class ModelTrainer:
                 if nf in ['sent_polarity', 'sent_subjectivity']:
                     # Generate basic sentiment features if not available
                     df[nf] = 0.0
-                    print(f"⚠️  Warning: {nf} not found, using default value 0.0")
+                    print(f"WARNING: {nf} not found, using default value 0.0")
                 else:
                     df[nf] = 0.0
         
@@ -177,7 +186,7 @@ class ModelTrainer:
         else:
             output_dim = 1
             
-        print(f"🏗️  Creating {model_name} model:")
+        print(f"Creating {model_name} model:")
         print(f"   - Input dimensions: text={text_dim}, num={num_dim}")
         print(f"   - Hidden dimension: {hidden_dim}")
         print(f"   - Output dimension: {output_dim}")
@@ -297,12 +306,12 @@ class ModelTrainer:
     def train_model(self, model_name: str, df: pd.DataFrame, task_type: str, 
                    epochs: int = NUM_EPOCHS, max_rows: int = 10000) -> Dict:
         """Train a single model with detailed progress tracking"""
-        print(f"\n🎯 Training {model_name} for {task_type} task...")
+            print(f"\nTraining {model_name} for {task_type} task...")
         print("=" * 60)
         
         # Subsample for faster training
         if len(df) > max_rows:
-            print(f"📊 Subsampling from {len(df)} to {max_rows} rows for faster training")
+            print(f"Subsampling from {len(df)} to {max_rows} rows for faster training")
             df = df.sample(n=max_rows, random_state=42).reset_index(drop=True)
             
         X_text, X_num, y = self.build_dataset_from_df(df, task_type)
@@ -327,9 +336,9 @@ class ModelTrainer:
         indices = torch.randperm(n, device=DEVICE)
         train_idx, val_idx = indices[:split], indices[split:]
         
-        print(f"📊 Train/Val split: {len(train_idx)}/{len(val_idx)} samples")
-        print(f"🔧 Optimizer: Adam (lr={LEARNING_RATE})")
-        print(f"📈 Scheduler: StepLR (step=2, gamma=0.9)")
+        print(f"Train/Val split: {len(train_idx)}/{len(val_idx)} samples")
+        print(f"Optimizer: Adam (lr={LEARNING_RATE})")
+        print(f"Scheduler: StepLR (step=2, gamma=0.9)")
         
         # Training loop with tqdm
         train_losses, val_losses = [], []
@@ -449,13 +458,13 @@ class ModelTrainer:
             'val_metrics': val_metrics
         }, model_path)
         
-        print(f"💾 Model saved to: {model_path}")
+        print(f"Model saved to: {model_path}")
         
         # Print final results
         final_train_metric = train_metrics[-1]
         final_val_metric = val_metrics[-1]
         
-        print(f"\n📊 Final Results for {model_name} ({task_type}):")
+        print(f"\nFinal Results for {model_name} ({task_type}):")
         print(f"   Training - Loss: {train_losses[-1]:.4f}, Metrics: {final_train_metric}")
         print(f"   Validation - Loss: {val_losses[-1]:.4f}, Metrics: {final_val_metric}")
         
@@ -478,15 +487,15 @@ class ModelTrainer:
             model_names = ['EarlyFusion', 'LateFusion', 'HybridFusion', 'CrossModalTransformer', 
                           'EnsembleFusion', 'AdaptiveEnsemble', 'LSTM', 'Transformer']
         
-        print(f"\n🚀 Starting comprehensive model training...")
-        print(f"📋 Tasks: {task_types}")
-        print(f"🤖 Models: {model_names}")
+        print(f"\nStarting comprehensive model training...")
+        print(f"Tasks: {task_types}")
+        print(f"Models: {model_names}")
         print("=" * 80)
         
         results = {}
         
         for task_type in task_types:
-            print(f"\n🎯 Training models for {task_type.upper()} task...")
+            print(f"\nTraining models for {task_type.upper()} task...")
             print("-" * 60)
             results[task_type] = {}
             
@@ -502,12 +511,12 @@ class ModelTrainer:
                         'train_metrics': result['train_metrics'],
                         'val_metrics': result['val_metrics']
                     }
-                    print(f"✅ {model_name} completed successfully!")
+                    print(f"{model_name} completed successfully!")
                 except Exception as e:
                     import traceback
                     error_msg = f"Error training {model_name} for {task_type}: {str(e)}"
-                    print(f"❌ {error_msg}")
-                    print(f"📋 Full error traceback:")
+                    print(f"ERROR: {error_msg}")
+                    print(f"Full error traceback:")
                     print(traceback.format_exc())
                     results[task_type][model_name] = {'error': str(e)}
         
@@ -550,7 +559,7 @@ class ModelTrainer:
         
         plt.tight_layout()
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
-        print(f"📊 Training plots saved to: {save_path}")
+        print(f"Training plots saved to: {save_path}")
         plt.show()
     
     def generate_report(self, results: Dict, save_path: str = "reports/model_performance_report.txt"):
@@ -630,7 +639,7 @@ class ModelTrainer:
     
     def generate_advanced_analysis(self, results: Dict):
         """Generate advanced model comparison and analysis"""
-        print("🔬 Generating advanced model analysis...")
+        print("Generating advanced model analysis...")
         
         # Collect all model metrics for comparison
         all_metrics = {}
@@ -643,15 +652,15 @@ class ModelTrainer:
         # Generate advanced comparison
         for task_type, metrics in all_metrics.items():
             if metrics:
-                print(f"\n📊 Advanced Analysis for {task_type.upper()}:")
+                print(f"\nAdvanced Analysis for {task_type.upper()}:")
                 comparison = advanced_model_comparison(metrics)
                 
-                print(f"🏆 Best models by metric:")
+                print(f"Best models by metric:")
                 for metric, data in comparison.items():
                     if metric not in ['overall_ranking', 'model_scores']:
                         print(f"   - {metric.replace('_', ' ').title()}: {data['best_model']} ({data['best_value']:.4f})")
                 
-                print(f"\n🥇 Overall ranking:")
+                print(f"\nOverall ranking:")
                 for i, (model, score) in enumerate(comparison['overall_ranking'][:3], 1):
                     print(f"   {i}. {model}: {score:.4f}")
         
@@ -680,11 +689,11 @@ class ModelTrainer:
                     
                     f.write("\n" + "=" * 50 + "\n")
         
-        print(f"📄 Advanced analysis report saved to: {report_path}")
+        print(f"Advanced analysis report saved to: {report_path}")
     
     def generate_cross_modal_analysis(self, results: Dict):
         """Generate cross-modal analysis and visualizations"""
-        print("🔬 Generating cross-modal analysis...")
+        print("Generating cross-modal analysis...")
         
         try:
             # Collect fusion model results
@@ -701,9 +710,9 @@ class ModelTrainer:
                 try:
                     fusion_fig = create_fusion_technique_comparison(fusion_results)
                     fusion_fig.write_html("reports/fusion_technique_comparison.html")
-                    print("📊 Fusion technique comparison saved to: reports/fusion_technique_comparison.html")
+                    print("Fusion technique comparison saved to: reports/fusion_technique_comparison.html")
                 except Exception as e:
-                    print(f"⚠️  Warning: Could not generate fusion comparison chart: {e}")
+                    print(f"WARNING: Could not generate fusion comparison chart: {e}")
                     # Create a simple comparison chart instead
                     try:
                         import plotly.graph_objects as go
@@ -717,9 +726,9 @@ class ModelTrainer:
                                 ))
                         fig.update_layout(title="Fusion Model Performance Comparison")
                         fig.write_html("reports/fusion_technique_comparison.html")
-                        print("📊 Simple fusion comparison saved to: reports/fusion_technique_comparison.html")
+                        print("Simple fusion comparison saved to: reports/fusion_technique_comparison.html")
                     except Exception as e2:
-                        print(f"⚠️  Could not create simple comparison chart: {e2}")
+                        print(f"WARNING: Could not create simple comparison chart: {e2}")
             
             # Generate model comparison charts for each task
             for task_type, task_results in results.items():
@@ -740,9 +749,9 @@ class ModelTrainer:
                             radar_fig = create_performance_radar_chart(model_metrics)
                             radar_fig.write_html(f"reports/{task_type}_performance_radar.html")
                             
-                            print(f"📊 {task_type.title()} analysis charts saved to reports/")
+                            print(f"{task_type.title()} analysis charts saved to reports/")
                         except Exception as e:
-                            print(f"⚠️  Warning: Could not generate {task_type} visualization: {e}")
+                            print(f"WARNING: Could not generate {task_type} visualization: {e}")
             
             # Generate interactive HTML dashboard
             all_model_metrics = {}
@@ -754,12 +763,12 @@ class ModelTrainer:
             if all_model_metrics:
                 try:
                     html_filename = export_results_to_html(all_model_metrics, "reports/multimodal_analysis_dashboard.html")
-                    print(f"🎨 Interactive dashboard saved to: {html_filename}")
+                    print(f"Interactive dashboard saved to: {html_filename}")
                 except Exception as e:
-                    print(f"⚠️  Warning: Could not generate interactive dashboard: {e}")
+                    print(f"WARNING: Could not generate interactive dashboard: {e}")
         
         except Exception as e:
-            print(f"⚠️  Error generating cross-modal analysis: {e}")
+            print(f"ERROR: Error generating cross-modal analysis: {e}")
     
     def enhanced_predict(self, model_name: str, task_type: str, text: str) -> Dict:
         """Enhanced prediction with cross-modal feature analysis"""
@@ -781,7 +790,7 @@ class ModelTrainer:
                 sent_feats = advanced_sentiment_features(filtered_text)
                 linguistic_feats = extract_linguistic_features(filtered_text)
             except Exception as e:
-                print(f"⚠️  Warning: Error in feature extraction: {e}")
+                print(f"WARNING: Error in feature extraction: {e}")
                 # Fallback to basic features
                 sent_feats = {
                     'polarity': 0.0, 'subjectivity': 0.0, 'word_count': len(filtered_text.split()),
@@ -864,9 +873,9 @@ def main():
     
     args = parser.parse_args()
     
-    print("🚀 Multi-Modal Review Analyzer - Enhanced Training Pipeline")
+    print("Multi-Modal Review Analyzer - Enhanced Training Pipeline")
     print("=" * 70)
-    print(f"📋 Configuration:")
+    print(f"Configuration:")
     print(f"   - Models: {args.models}")
     print(f"   - Tasks: {args.tasks}")
     print(f"   - Epochs: {args.epochs}")
@@ -878,12 +887,12 @@ def main():
     trainer = ModelTrainer()
     
     # Load data
-    print("\n📁 Loading data...")
+    print("\nLoading data...")
     try:
         # Get available files
         raw_files = list_jsonl_files(RAW_DATA_DIR)
         if not raw_files:
-            print("❌ No JSONL files found in data/raw/")
+            print("ERROR: No JSONL files found in data/raw/")
             return
         
         # Use specified file or first available file or default
@@ -891,28 +900,28 @@ def main():
             reviews_file = args.data_file
             selected_reviews_path = os.path.join(RAW_DATA_DIR, reviews_file)
             if not os.path.exists(selected_reviews_path):
-                print(f"❌ Specified data file not found: {selected_reviews_path}")
+                print(f"ERROR: Specified data file not found: {selected_reviews_path}")
                 return
         else:
             reviews_file = raw_files[0] if raw_files else os.path.basename(REVIEWS_FILE)
             selected_reviews_path = os.path.join(RAW_DATA_DIR, reviews_file)
         
-        print(f"📄 Using reviews file: {reviews_file}")
+        print(f"Using reviews file: {reviews_file}")
         
         # Process and load data
         parquet_path = ensure_processed_parquet(selected_reviews_path)
         reviews_df = load_processed_parquet(parquet_path)
         
-        print(f"✅ Data loaded successfully: {len(reviews_df)} samples")
+        print(f"Data loaded successfully: {len(reviews_df)} samples")
         
         if args.debug:
-            print(f"📋 Data columns: {list(reviews_df.columns)}")
-            print(f"📋 Data types: {reviews_df.dtypes.to_dict()}")
-            print(f"📋 Sample data (first 3 rows):")
+            print(f"Data columns: {list(reviews_df.columns)}")
+            print(f"Data types: {reviews_df.dtypes.to_dict()}")
+            print(f"Sample data (first 3 rows):")
             print(reviews_df.head(3))
         
     except Exception as e:
-        print(f"❌ Error loading data: {e}")
+        print(f"ERROR: Error loading data: {e}")
         return
     
     # Use command-line arguments
@@ -925,36 +934,36 @@ def main():
     results = trainer.train_all_models(reviews_df, task_types, model_names)
     
     # Generate visualizations and reports
-    print("\n📊 Generating reports and visualizations...")
+    print("\nGenerating reports and visualizations...")
     trainer.plot_training_results()
     trainer.generate_report(results)
     
     # Generate advanced analysis and comparisons (unless skipped)
     if not args.skip_analysis:
-        print("\n🔬 Generating advanced analysis...")
+        print("\nGenerating advanced analysis...")
         trainer.generate_advanced_analysis(results)
         trainer.generate_cross_modal_analysis(results)
     else:
-        print("\n⏭️  Skipping advanced analysis generation")
+        print("\nSkipping advanced analysis generation")
     
     # Summary
-    print("\n🎉 Training completed successfully!")
-    print(f"📊 Trained models: {len(trainer.trained_models)}")
-    print(f"📈 Performance metrics:")
+    print("\nTraining completed successfully!")
+    print(f"Trained models: {len(trainer.trained_models)}")
+    print(f"Performance metrics:")
     for model_key, metrics in trainer.model_metrics.items():
         print(f"   - {model_key}: {metrics}")
     
     # Test inference with enhanced features
-    print("\n🧪 Testing enhanced inference...")
+    print("\nTesting enhanced inference...")
     test_text = "This is an amazing product! I love it and would definitely recommend it to others."
     
     # Test with enhanced prediction (shows cross-modal features)
-    print("🔬 Enhanced prediction with cross-modal analysis:")
+    print("Enhanced prediction with cross-modal analysis:")
     for model_key in list(trainer.trained_models.keys())[:2]:  # Test first 2 models
         model_name, task_type = model_key.split('_')
         result = trainer.enhanced_predict(model_name, task_type, test_text)
         if 'error' not in result:
-            print(f"\n   📊 {model_key} Results:")
+            print(f"\n   {model_key} Results:")
             if task_type == 'classification':
                 print(f"      - Prediction: {result['prediction']}")
                 print(f"      - Confidence: {result['confidence']:.3f}")
@@ -969,7 +978,7 @@ def main():
             print(f"   - {model_key}: Error - {result['error']}")
     
     # Test standard inference for comparison
-    print("\n🧪 Standard inference comparison:")
+    print("\nStandard inference comparison:")
     for model_key in list(trainer.trained_models.keys())[:2]:
         model_name, task_type = model_key.split('_')
         result = trainer.predict(model_name, task_type, test_text)
